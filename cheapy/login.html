@@ -4,8 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | Group Assignment</title>
+    <link rel="stylesheet" href="./assets/base.css">
+    <link rel="stylesheet" href="./assets/login.css">
 </head>
 <body>
-    
+    <form id="signup_form">
+
+        <p class="form-heading">Glad to have you back</p>
+
+        <label for="email">Email</label><br />
+        <input type="email" name="user_email" placeholder="john-doe@gmail.com" id="email"><br />
+        <label for="password">Password</label><br />
+        <input type="password" name="user_password" placeholder="******" id="password"><br />
+
+        <input type="submit" value="Login">
+
+        <p id="signup-redirect" class="signup-alternative">Don't have an account? <span>Sign Up</span></p>
+    </form>
+
+    <script>
+        const form = document.getElementById('signup_form');
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            //Add sign up validation here
+
+            //Add redirection code
+            alert("Sign in complete...... Prepare for redirect")
+
+        })
+
+        document.getElementById('signup-redirect').addEventListener('click', ()=> {
+            window.location.href="./signup.html"
+        })
+    </script>
 </body>
 </html>

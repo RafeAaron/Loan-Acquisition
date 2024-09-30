@@ -20,6 +20,10 @@ form{
     margin-bottom: 20px;
 }
 
+span:hover{
+    cursor: pointer;
+}
+
 input[type=submit]{
     width: 200px;
     height: 40px;
