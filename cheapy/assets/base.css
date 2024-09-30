@@ -1,0 +1,40 @@
+body{
+    width: 100vw;
+    height: 100vh;
+}
+
+form{
+    width: 340px;
+    border: 2px solid black;
+    text-align: center;
+}
+
+input[type=submit]{
+    width: 200px;
+    height: 40px;
+
+    font-size: 18px;
+    
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+input[type=submit]:hover{
+
+}
+
+label{
+    margin-top: 10px;
+}
+
+input[type=email]{
+    width: 80%;
+
+    margin-bottom: 10px;
+}
+
+input[type=password]{
+    width: 80%;
+
+    margin-bottom: 10px;
+}
