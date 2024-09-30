@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cheapy Loan - Loan Acquisition Hub</title>
+    <style>
+        .hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 80vh;
+            background-image: url('./images/finance9.webp');
+            background-size: cover;
+            background-position: center;
+            text-align: center;
+            position: relative; /* For absolute positioning of navbar and separator */
+        }
+
+        header {
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: 0;
+            background: transparent; /* Transparent background for the header */
+            z-index: 1; /* Ensure header is above background image */
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: flex-end; /* Align navbar to the right */
+            align-items: center;
+            padding: 15px 30px; /* Padding for navbar */
+            position: relative; /* Ensure it stays within the header */
+        }
+
+        .logo {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            position: absolute;
+            top: 15px; /* Space from the top */
+            left: 30px; /* Space from the left */
+        }
+
+        nav {
+            display: flex;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+        }
+
+        nav ul li {
+            margin-left: 20px;
+            position: relative; /* For dropdown positioning */
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            padding: 5px 10px;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        nav ul li a:after {
+            content: '';
+            display: block;
+            height: 3px; /* Thickness of underline */
+            width: 0;
+            background-color: #FF6347;
+            position: absolute;
+            bottom: -10px; /* Positioning underline below the header padding */
+            left: 0;
+            transition: width 0.3s ease; /* Smooth transition */
+        }
+
+        nav ul li a:hover {
+            color: white;
+        }
+
+        nav ul li a:hover:after {
+            width: 100%; /* Full underline on hover */
+        }
+
+        /* Dropdown menu */
+        nav ul li .dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% + 15px); /* Ensure dropdown is below the underline */
+            left: 0;
+            background-color: white;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+            min-width: 200px;
+            border-radius: 0 0 8px 8px; /* Curved bottom corners */
+        }
+
+        nav ul li .dropdown a {
+            color: #333;
+            padding: 10px 15px;
+            display: block;
+            text-align: left;
+            transition: background-color 0.3s ease;
+        }
+
+        nav ul li .dropdown a:hover {
+            background-color: #f0f0f0; /* Light grey on hover */
+        }
+
+        /* Show dropdown on hover */
+        nav ul li:hover .dropdown {
+            display: block;
+        }
+
+        /* Sign-up button styling */
+        .sign-up {
+            background-color: #FF6347;
+            padding: 10px 20px;
+            border-radius: 5px;
+            color: white;
+            text-decoration: none;
+            position: fixed; /* Fixed position for sign-up button */
+            top: 20px;
+            right: 20px;
+            z-index: 2; /* Ensure it is above other elements */
+        }
+
+        .separator {
+            height: 1px;
+            background-color: #FF6347; /* Separator color */
+            margin: 30px auto; /* Margin from navbar and center it */
+            width: 90%; /* Adjust width to not touch extreme edges */
+            max-width: 1200px; /* Optional: Max width for larger screens */
+        }
+
+        .hero h1 {
+            color: #FF6347;
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            color: white;
+            font-size: 20px;
+            margin-bottom: 30px;
+        }
+
+        .trial-btn {
+            background-color: #FF6347;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .sub-text {
+            color: white;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        footer {
+            background-color: #E8F5E9;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        .trusted p {
+            font-size: 18px;
+            color: #333;
+        }
+
+        .trusted a {
+            color: #FF6347;
+            text-decoration: none;
+        }
+
+        /* Drawer for small screens */
+        .drawer {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0; /* Position the drawer on the top left corner */
+            height: 100vh;
+            width: 250px;
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            transform: translateX(-100%); /* Hide drawer off-screen initially */
+            transition: transform 0.3s ease;
+            z-index: 10;
+            overflow-y: auto; /* Ensure content is scrollable */
+        }
+
+        .drawer.open {
+            transform: translateX(0); /* Slide in the drawer */
+            display: block; /* Ensure it's visible when open */
+        }
+
+        .drawer ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .drawer ul li {
+            margin: 20px 0;
+            position: relative; /* For dropdown positioning */
+        }
+
+        .drawer ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            display: block;
+            padding: 10px 0;
+        }
+
+        .drawer .dropdown {
+            display: none;
+            background-color: #444;
+            padding-left: 20px;
+        }
+
+        .drawer .dropdown a {
+            padding: 10px 15px;
+            color: #ddd;
+        }
+
+        .drawer .dropdown a:hover {
+            background-color: #555;
+        }
+
+        /* Show dropdown in drawer when open */
+        .drawer ul li .dropdown.open {
+            display: block; /* Ensure dropdown is shown */
+        }
+
+        /* Hamburger Icon Changes */
+        .hamburger {
+            display: none;
+            font-size: 30px;
+            color: white;
+            cursor: pointer;
+            position: absolute;
+            top: 20px;
+            left: 20px; /* Adjust position to top left corner */
+            z-index: 11; /* Ensure it's above other elements */
+        }
+
+        .hamburger::before {
+            content: '\2630'; /* Hamburger icon (three dots) */
+        }
+
+        /* Close Icon for Hamburger */
+        .hamburger.open::before {
+            content: '\00d7'; /* Close icon */
+        }
+
+        /* Media query for small screens */
+        @media (max-width: 768px) {
+            .navbar {
+                display: none; /* Hide regular navbar on smaller screens */
+            }
+
+            .separator {
+                display: block; /* Ensure separator is visible on small screens */
+                margin-top: 80px; /* Adjust margin to account for the drawer */
+            }
+
+            .hamburger {
+                display: block; /* Show hamburger icon on smaller screens */
+            }
+
+            /* Hide the hamburger icon when the drawer is open */
+            .drawer.open ~ .hamburger {
+                display: none; /* Ensure the hamburger icon is hidden when drawer is open */
+            }
+        }
+
+        /* Floating Call Button Styling */
+        .floating-call-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #FF6347;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            box-shadow: 0px 4px 6px rgba(248, 246, 246, 0.1);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            z-index: 1000;
+        }
+
+        .floating-call-btn:hover {
+            background-color: #e55347;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="navbar">
+            <nav>
+                <ul>
+                    <li>
+                        <a href="#">About Us</a>
+                        <div class="dropdown-wrapper">
+                            <div class="dropdown">
+                                <a href="#">Our Story</a>
+                                <a href="#">Team</a>
+                                <a href="#">Careers</a>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <a href="#">Membership</a>
+                        <div class="dropdown-wrapper">
+                            <div class="dropdown">
+                                <a href="#">Pricing</a>
+                                <a href="#">Benefits</a>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <a href="#">Products & Services</a>
+                        <div class="dropdown-wrapper">
+                            <div class="dropdown">
+                                <a href="#">Loan Products</a>
+                                <a href="#">Savings</a>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <a href="#">Resources</a>
+                        <div class="dropdown-wrapper">
+                            <div class="dropdown">
+                                <a href="#">Blog</a>
+                                <a href="#">FAQs</a>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <a href="#">Contact</a>
+                        <div class="dropdown-wrapper">
+                            <div class="dropdown">
+                                <a href="#">Support</a>
+                                <a href="#">Locations</a>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div class="separator"></div> <!-- Separator Line -->
+
+        <!-- Hamburger Icon for Small Screens -->
+        <div class="hamburger"></div>
+        
+        <!-- Drawer for Small Screens -->
+        <div class="drawer">
+            <ul>
+                <li>
+                    <a href="#">About Us</a>
+                    <div class="dropdown">
+                        <a href="#">Our Story</a>
+                        <a href="#">Team</a>
+                        <a href="#">Careers</a>
+                    </div>
+                </li>
+                <li>
+                    <a href="#">Membership</a>
+                    <div class="dropdown">
+                        <a href="#">Pricing</a>
+                        <a href="#">Benefits</a>
+                    </div>
+                </li>
+                <li>
+                    <a href="#">Products & Services</a>
+                    <div class="dropdown">
+                        <a href="#">Loan Products</a>
+                        <a href="#">Savings</a>
+                    </div>
+                </li>
+                <li>
+                    <a href="#">Resources</a>
+                    <div class="dropdown">
+                        <a href="#">Blog</a>
+                        <a href="#">FAQs</a>
+                    </div>
+                </li>
+                <li>
+                    <a href="#">Contact</a>
+                    <div class="dropdown">
+                        <a href="#">Support</a>
+                        <a href="#">Locations</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Sign Up Free Button -->
+    <a href="#" class="sign-up">Sign Up </a>
+
+    <section class="hero">
+        <div class="content">
+            <h1>Loan Management System</h1>
+            <p>Developed specially for the Microfinance industry</p>
+            <button class="trial-btn">Fast, Reliable & Affordable</button>
+            <p class="sub-text">Cloud-based lending software that is secure and easy to use.</p>
+        </div>
+    </section>
+
+    <footer>
+        <div class="trusted">
+            <p>Trusted by over 600 Lending Companies Worldwide</p>
+            <a href="#">See some of our clients</a>
+        </div>
+    </footer>
+
+    <!-- Floating Call Button -->
+    <button class="floating-call-btn" id="callButton">
+        📞
+    </button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const drawer = document.querySelector('.drawer');
+            const hamburger = document.querySelector('.hamburger');
+            const drawerItems = document.querySelectorAll('.drawer ul li');
+
+            hamburger.addEventListener('click', () => {
+                drawer.classList.toggle('open'); // Toggle drawer visibility
+                hamburger.classList.toggle('open'); // Toggle hamburger icon to close icon
+            });
+
+            drawerItems.forEach(item => {
+                const link = item.querySelector('a');
+                link.addEventListener('click', (event) => {
+                    const dropdown = item.querySelector('.dropdown');
+                    if (dropdown) {
+                        event.preventDefault(); // Prevent default action for demonstration purposes
+                        dropdown.classList.toggle('open'); // Toggle dropdown visibility
+                    }
+                });
+            });
+
+            // Floating Call Button click event
+            const callButton = document.getElementById('callButton');
+            callButton.addEventListener('click', () => {
+                window.location.href = './videocall.html'
+            });
+        });
+    </script>
+
+</body>
+</html>

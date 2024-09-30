@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Call</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        input, button {
+            padding: 10px;
+            font-size: 16px;
+            margin: 10px;
+        }
+
+        input[type="text"] {
+            width: 200px;
+        }
+
+        video {
+            border: 2px solid #333;
+            border-radius: 8px;
+            margin: 20px 10px;
+            display: none;
+        }
+
+        #localVideo {
+            display: block;
+        }
+
+        #videoContainer {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+        }
+
+        button:hover:enabled {
+            background-color: #45a049;
+        }
+
+        .copy-btn {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        .copy-btn:hover {
+            background-color: #0056b3;
+        }
+
+        @media (max-width: 768px) {
+            #videoContainer {
+                flex-direction: column;
+            }
+
+            video {
+                width: 90%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            video {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Simple Video Call</h1>
+
+    <input type="text" id="peerIdInput" placeholder="Enter Peer ID to call">
+    <button id="callButton">Call</button>
+    <button id="endCallButton" disabled>End Call</button>
+
+    <p>Your Peer ID: 
+        <input type="text" id="peerIdDisplay" readonly>
+        <button class="copy-btn" id="copyButton">Copy</button>
+    </p>
+
+    <div id="videoContainer">
+        <video id="localVideo" autoplay muted controls playsinline></video>
+        <video id="remoteVideo" autoplay controls playsinline></video>
+    </div>
+
+    <!-- Include ringtone audio -->
+    <audio id="ringtone" src="./images/ringtone.mp3" loop></audio>
+
+    <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+
+    <script>
+        let peer;
+        let localStream;
+        let currentCall;
+        const callButton = document.getElementById('callButton');
+        const endCallButton = document.getElementById('endCallButton');
+        const peerIdInput = document.getElementById('peerIdInput');
+        const localVideo = document.getElementById('localVideo');
+        const remoteVideo = document.getElementById('remoteVideo');
+        const copyButton = document.getElementById('copyButton');
+        const peerIdDisplay = document.getElementById('peerIdDisplay');
+        const ringtone = document.getElementById('ringtone');
+
+        // Function to fetch Xirsys ICE servers
+        function getIceServers() {
+            return new Promise((resolve, reject) => {
+                let xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        let res = JSON.parse(xhr.responseText);
+                        console.log("ICE servers fetched: ", res.v.iceServers);
+                        resolve(res.v.iceServers);
+                    } else if (xhr.readyState == 4) {
+                        reject('Error fetching ICE servers');
+                    }
+                };
+                xhr.open("PUT", "https://global.xirsys.net/_turn/MyFirstApp", true);
+                xhr.setRequestHeader("Authorization", "Basic " + btoa("boysolo:25004894-6f4d-11ef-ae63-0242ac130003"));
+                xhr.setRequestHeader("Content-Type", "application/json");
+                xhr.send(JSON.stringify({ "format": "urls" }));
+            });
+        }
+
+        // Fetch ICE servers and initialize PeerJS
+        getIceServers().then(iceServers => {
+            console.log("Initializing PeerJS with ICE servers...");
+            peer = new Peer({
+                config: {
+                    iceServers: [
+                        { 
+                            urls: [
+                                "stun:jb-turn1.xirsys.com", 
+                                "turn:jb-turn1.xirsys.com:80?transport=udp", 
+                                "turns:jb-turn1.xirsys.com:443?transport=tcp"
+                            ],
+                            username: iceServers.username, 
+                            credential: iceServers.credential 
+                        }
+                    ]
+                }
+            });
+
+            peer.on('open', (id) => {
+                console.log('My peer ID is: ' + id);
+                peerIdDisplay.value = id;
+            });
+
+            peer.on('error', (err) => {
+                console.error('PeerJS Error:', err);
+                alert('An error occurred: ' + err.type);
+            });
+
+            // Get user media (audio and video)
+            navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+                .then(stream => {
+                    localStream = stream;
+                    localVideo.srcObject = stream;
+                    console.log("Local video stream set.");
+                })
+                .catch(error => {
+                    console.error('Error accessing media devices.', error);
+                    alert('Error accessing media devices: ' + error.message);
+                });
+
+            // Play ringtone for incoming calls
+            peer.on('call', (call) => {
+                console.log("Incoming call...");
+                ringtone.play();  // Play ringtone for incoming call
+
+                // Prompt user to accept or reject the call
+                let userConfirmed = confirm("You have an incoming call. Do you want to accept?");
+                ringtone.pause();  // Stop ringtone when user interacts with the confirm dialog
+                ringtone.currentTime = 0;  // Reset ringtone to the start
+
+                if (userConfirmed) {
+                    call.answer(localStream);  // Accept the call and send the local video stream
+
+                    // Show remote video after the call is accepted
+                    call.on('stream', (remoteStream) => {
+                        console.log('Received remote stream after answering');
+                        remoteVideo.srcObject = remoteStream;
+                        showRemoteVideo();
+                    });
+
+                    call.on('close', () => {
+                        console.log('Call ended.');
+                        resetCallUI();
+                    });
+
+                    currentCall = call;
+                    callButton.disabled = true;
+                    endCallButton.disabled = false;
+                } else {
+                    console.log('Call rejected.');
+                    call.close();  // Reject the call by closing it
+                }
+            });
+
+        }).catch(err => {
+            console.error('Error initializing PeerJS with Xirsys ICE servers:', err);
+        });
+
+        // Make a call
+        callButton.onclick = () => {
+            const peerId = peerIdInput.value;
+            if (!peerId) {
+                alert('Please enter a valid Peer ID.');
+                return;
+            }
+
+            console.log("Calling peer: " + peerId);
+            const call = peer.call(peerId, localStream);
+
+            call.on('stream', (remoteStream) => {
+                console.log('Received remote stream');
+                remoteVideo.srcObject = remoteStream;
+                showRemoteVideo();
+            });
+
+            call.on('close', () => {
+                console.log('Call ended.');
+                resetCallUI();
+            });
+
+            currentCall = call;
+            callButton.disabled = true;
+            endCallButton.disabled = false;
+        };
+
+        // End the call
+        endCallButton.onclick = () => {
+            if (currentCall) {
+                currentCall.close();
+                currentCall = null;
+            }
+            resetCallUI();
+        };
+
+        // Show only remote video during a call
+        function showRemoteVideo() {
+            localVideo.style.display = 'none';
+            remoteVideo.style.display = 'block';
+        }
+
+        // Reset UI after call ends
+        function resetCallUI() {
+            callButton.disabled = false;
+            endCallButton.disabled = true;
+            remoteVideo.style.display = 'none';
+            localVideo.style.display = 'block';
+        }
+
+        // Copy Peer ID to clipboard
+        copyButton.onclick = () => {
+            peerIdDisplay.select();
+            peerIdDisplay.setSelectionRange(0, 99999);
+
+            navigator.clipboard.writeText(peerIdDisplay.value).then(() => {
+                alert('Peer ID copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+            });
+        };
+
+    </script>
+</body>
+</html>
