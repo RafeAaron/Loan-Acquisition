@@ -5,16 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign up | Group Project</title>
     <link rel="stylesheet" href="./assets/base.css">
+    <link rel="stylesheet" href="./assets/signup.css">
 </head>
 <body>
     <form id="signup_form">
+
+        <p class="form-heading">Welcome to the family</p>
+
         <label for="email">Email</label><br />
         <input type="email" name="user_email" placeholder="john-doe@gmail.com" id="email"><br />
         <label for="password">Password</label><br />
         <input type="password" name="user_password" placeholder="******" id="password"><br />
-        <label for="cpassword">Confirm</label><br />
+        <label for="cpassword">Confirm Password</label><br />
         <input type="password" placeholder="******" id="cpassword"><br />
         <input type="submit" value="Sign Up">
+
+        <p id="login-redirect" class="login-alternative">Already have a password? <span>Login</span></p>
     </form>
 
     <script>
@@ -28,6 +34,10 @@
             //Add redirection code
             alert("Sign Up process complete")
 
+        })
+
+        document.getElementById('login-redirect').addEventListener('click', ()=> {
+            window.location.href="./login.html"
         })
     </script>
 </body>
