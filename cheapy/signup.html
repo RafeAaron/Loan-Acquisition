@@ -34,6 +34,10 @@
             //Add redirection code
             alert("Sign Up process complete")
 
+            window.localStorage.setItem("email", document.getElementById('email').value)
+
+            window.location.href = './welcome.html'
+
         })
 
         document.getElementById('login-redirect').addEventListener('click', ()=> {

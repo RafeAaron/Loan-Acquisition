@@ -33,6 +33,8 @@
             //Add redirection code
             alert("Sign in complete...... Prepare for redirect")
 
+            window.localStorage.setItem("email", document.getElementById('email').value)
+
             window.location.href = './welcome.html';
 
         })

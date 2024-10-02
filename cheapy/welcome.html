@@ -6,7 +6,7 @@
     <title>Welcome | Group Assignment</title>
     <link rel="stylesheet" href="./assets/welcome.css">
     <link rel="stylesheet" href="./assets/base.css">
-    <script src="./assets/scripts/welcome.js"></script>
+    <script src="./assets/scripts/welcome.js" defer></script>
 </head>
 <body>
     <div class="navbar">
@@ -14,9 +14,10 @@
 
             <p class="welcomeMessage">Welcome Mr. Aaron</p>
             <ul class="majoroptions">
-                <li>Dashboard</li>
-                <li>Loans</li>
-                <li>Payments</li>
+                <li class="option">Dashboard</li>
+                <li class="option">Loans</li>
+                <li class="option">Savings</li>
+                <li class="option">Payments</li>
             </ul>
         </div>
         <div class="logout">
@@ -24,12 +25,5 @@
         </div>
     </div>
 
-    <script>
-        let logoutButton = document.getElementById("logoutButton");
-
-        logoutButton.addEventListener("click", ()=>{
-            window.location.href = './login.html'
-        })
-    </script>
 </body>
 </html>
