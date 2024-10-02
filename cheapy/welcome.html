@@ -4,8 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome | Group Assignment</title>
+    <link rel="stylesheet" href="./assets/welcome.css">
+    <link rel="stylesheet" href="./assets/base.css">
+    <script src="./assets/scripts/welcome.js"></script>
 </head>
 <body>
-    
+    <div class="navbar">
+        <div class="optionsList">
+
+            <p class="welcomeMessage">Welcome Mr. Aaron</p>
+            <ul class="majoroptions">
+                <li>Dashboard</li>
+                <li>Loans</li>
+                <li>Payments</li>
+            </ul>
+        </div>
+        <div class="logout">
+            <p class="logoutButton" id="logoutButton">Log out</p>
+        </div>
+    </div>
+
+    <script>
+        let logoutButton = document.getElementById("logoutButton");
+
+        logoutButton.addEventListener("click", ()=>{
+            window.location.href = './login.html'
+        })
+    </script>
 </body>
 </html>
