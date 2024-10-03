@@ -8,14 +8,14 @@
     <link rel="stylesheet" href="./assets/login.css">
 </head>
 <body>
-    <form id="signup_form">
+    <form id="login_form">
 
         <p class="form-heading">Glad to have you back</p>
 
         <label for="email">Email</label><br />
-        <input type="email" name="user_email" placeholder="john-doe@gmail.com" id="email"><br />
+        <input type="email" name="user_email" placeholder="john-doe@gmail.com" id="email" required><br />
         <label for="password">Password</label><br />
-        <input type="password" name="user_password" placeholder="******" id="password"><br />
+        <input type="password" name="user_password" placeholder="******" id="password" required><br />
 
         <input type="submit" value="Login">
 
@@ -23,16 +23,45 @@
     </form>
 
     <script>
-        const form = document.getElementById('signup_form');
+        const form = document.getElementById('login_form');
 
         form.addEventListener('submit', (e) => {
             e.preventDefault();
 
-            //Add sign up validation here
+            musthave = ['@', '.com'];
+            started = false;
+            
 
+            hasrequirement1 = false;
+            hasrequirement2 = false;
+
+            //Add login form validation here
+            username = document.getElementById('email')
+            password = document.getElementById('password')
+
+            usernamelength = username.value.length;
+
+            //password validation
+            if(password.value.length < 8) alert("Please enter a password that is above 8 characters")
+
+            //email validaton
+            for(let a = 0; a < username.value.length; a++){
+                if(!started){
+                    started = true;
+                }
+
+                if(username.value[a] == musthave[0]) hasrequirement1 = true;
+            }
+
+            console.log(username.value[usernamelength - 1])
+
+            if(username.value[usernamelength - 1] == 'm' && username.value[usernamelength - 2] == 'o' && username.value[usernamelength - 3] == 'c' && username.value[usernamelength - 4] == '.') hasrequirement2 = true;
+
+            if(hasrequirement1 && hasrequirement2) {alert('Email valid');}
+            else{
+                alert('Invalid email entered');
+            }
             //Add redirection code
-            alert("Sign in complete...... Prepare for redirect")
-
             window.localStorage.setItem("email", document.getElementById('email').value)
 
             window.location.href = './welcome.html';
